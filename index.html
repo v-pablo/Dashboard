@@ -207,15 +207,13 @@
             const data = [];
             const keyMap = {
                 'Status': 'status', 'Date': 'date', 'Event / Activity': 'event', 'Venue / Promoter': 'venue', 'Location': 'location',
-                'Set Time': 'setTime', 'Fee (Gross)': 'fee', 'Deposit Paid?': 'depositPaid', 'Logistics Notes': 'logisticsNotes',
+                'Set Time': 'setTime', 'Fee (Gross)': 'fee', 'Deposit Amount': 'depositPaid', 'Logistics Notes': 'logisticsNotes',
                 'A&R / Music Notes': 'arNotes', 'Primary Contact': 'contact', 'Itinerary Sent?': 'itinerarySent'
             };
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i]) continue;
                 
-                // This more robust regex splits by comma but correctly ignores commas inside double-quoted fields,
-                // and it correctly handles empty fields between commas.
                 const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 
                 const entry = { id: i };
@@ -224,9 +222,9 @@
                     if (key && values[index] !== undefined) {
                         let value = values[index].trim().replace(/^"|"$/g, '');
                         
-                        if (key === 'fee') {
+                        if (key === 'fee' || key === 'depositPaid') {
                             value = parseFloat(value.replace(/[^0-9.-]+/g, "")) || 0;
-                        } else if (key === 'depositPaid' || key === 'itinerarySent') {
+                        } else if (key === 'itinerarySent') {
                             value = value.toLowerCase() === 'yes';
                         }
                         entry[key] = value;
@@ -384,8 +382,8 @@
                     <div class="flex items-center gap-3"><span class="font-semibold w-24">Date:</span><span>${formatDate(item.date)}</span></div>
                     <div class="flex items-center gap-3"><span class="font-semibold w-24">Set Time:</span><span>${item.setTime || 'N/A'}</span></div>
                     <div class="flex items-center gap-3"><span class="font-semibold w-24">Fee:</span><span class="font-bold text-emerald-700">${formatCurrency(item.fee)}</span></div>
-                    <div class="flex items-center gap-3"><span class="font-semibold w-24">Deposit:</span><span>${item.depositPaid === null ? 'N/A' : item.depositPaid ? 'Paid' : 'Not Paid'}</span></div>
-                    <div class="flex items-center gap-3"><span class="font-semibold w-24">Itinerary:</span><span>${item.itinerarySent === null ? 'N/A' : item.itinerarySent ? 'Sent' : 'Not Sent'}</span></div>
+                    <div class="flex items-center gap-3"><span class="font-semibold w-24">Deposit:</span><span>${item.depositPaid > 0 ? formatCurrency(item.depositPaid) : 'Not Paid'}</span></div>
+                    <div class="flex items-center gap-3"><span class="font-semibold w-24">Itinerary:</span><span>${item.itinerarySent ? 'Sent' : 'Not Sent'}</span></div>
                     <div class="flex items-center gap-3 col-span-1 md:col-span-2"><span class="font-semibold w-24">Location:</span><span>${item.location}</span></div>
                     <div class="flex items-center gap-3 col-span-1 md:col-span-2"><span class="font-semibold w-24">Contact:</span><span>${item.contact || 'N/A'}</span></div>
                 </div>
