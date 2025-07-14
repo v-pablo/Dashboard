@@ -195,8 +195,8 @@
         }
         
         function formatCurrency(amount) {
-            if (isNaN(amount)) return '$0';
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+            if (isNaN(amount)) return '₦0';
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(amount);
         }
 
         function parseCSV(text) {
